@@ -175,8 +175,66 @@ public class ScrewtapeInterpreter {
    * @throws IllegalArgumentException If the program contains unmatched brackets.
    */
   public String execute(String program) {
-    // TODO: Implement this
-    // If you get stuck, you can look at hint.md for a hint
-    return null;
+    // get bracket map first throws if it is unmatched
+    Map<Integer, Integer> bracketMap = bracketMap(program);
+
+    String output = "";
+
+    for (int i = 0; i < program.length(); i++) {
+
+      char c = program.charAt(i);
+
+      // increment
+      if (c == '+') {
+        tapePointer.value++;
+      }
+
+      // decrement
+      else if (c == '-') {
+        tapePointer.value--;
+      }
+
+      // move right
+      else if (c == '>') {
+
+        if (tapePointer.next == null) {
+          Node newNode = new Node(0);
+          tapePointer.next = newNode;
+          newNode.prev = tapePointer;
+        }
+
+        tapePointer = tapePointer.next;
+      }
+
+      // move left
+      else if (c == '<') {
+
+        if (tapePointer.prev == null) {
+          Node newNode = new Node(0);
+          newNode.next = tapePointer;
+          tapePointer.prev = newNode;
+          // update the head when moving left
+          tapeHead = newNode;
+        }
+
+        tapePointer = tapePointer.prev;
+      }
+
+      // output
+      else if (c == '.') {
+        char outputChar = (char) tapePointer.value;
+        output = output + outputChar;
+      }
+
+      // loop jump
+      else if (c == ']') {
+        if (tapePointer.value != 0) {
+          i = bracketMap.get(i);
+        }
+      }
+
+    }
+
+    return output;
   }
 }
